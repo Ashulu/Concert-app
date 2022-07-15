@@ -234,6 +234,10 @@ class concert_App():
 
         for person in concertDictionary:
             print(person)
+            for thing in concertDictionary[person]:
+                print(thing)
+            
+            print()
 
 
 
@@ -260,5 +264,5 @@ class concert_App():
 Concert = concert_App()
 
 Concert.main()
-#print(ord("a"))
+
 
