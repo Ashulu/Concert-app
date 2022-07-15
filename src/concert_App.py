@@ -1,3 +1,4 @@
+from mimetypes import init
 import jsonpickle
 import json
 
@@ -7,7 +8,7 @@ class concert_App():
          self.n_row = 20
          self.n_col = 26
          self.seating = []
-
+    
     def prettyJson(self, jsonString):
         """
         Func: preattyJson
@@ -16,6 +17,22 @@ class concert_App():
 
         parsed = json.loads(jsonString)
         result = json.dumps(parsed,indent = 4, sort_keys=True)
+
+        return result
+    
+
+    def write_json(self, data, filename = r"C:\Users\ashis\OneDrive\Documents\GitHub\Concert-app\.vscode\customers.json"):
+        with open(filename,'r+') as file:
+            # First we load existing data into a dict.
+            file_data = json.load(file)
+            # Join new_data with file_data inside emp_details
+            file_data.append(data)
+            # Sets file's current position at offset.
+            file.seek(0)
+            # convert back to json.
+            json.dump(file_data, file, indent = 4)
+
+
 
     def menu(self):
         print("[b] buy")
@@ -42,9 +59,9 @@ class concert_App():
             print(r+1, end="\t")
             for c in range(0,self.n_col):
                 print(self.seating[r][c], end=" ")
-            if(r<6):
+            if(r<5):
                     print(" Front   $80")
-            elif(r<12):
+            elif(r<11):
                     print(" Middle   $50")
             else:
                     print(" Back   $25")
@@ -53,13 +70,19 @@ class concert_App():
 
     def buy(self):
         seat_list = []
-        cost = 0
         num_Tickets = int(input("How many in your party?: "))
         start = input("First seat:")
         split_word = list(start)
         row = int(split_word[0])-1
+        if(len(split_word) == 3):
+            row = int(split_word[0]+split_word[1])-1
         col = ord(split_word[1])-97
-        
+        seat_Type = "Front"
+        if(row > 4):
+            seat_Type = "Middle"
+        elif(row > 11):
+            seat_Type = "Back"
+
         #checks if seats are available
         if(self.seating[row][col] == '.' and self.seating[row][col+num_Tickets] != 'e' and self.seating[row][col+num_Tickets] != 'X'):
             print(str(num_Tickets)+" are available to buy starting from ("+str(row+1)+","+chr(col+97)+")")
@@ -76,28 +99,142 @@ class concert_App():
                     for i in range(1,3):
                         self.seating[row][col-i] = "e"
                         self.seating[row][col+num_Tickets+i-1] = "e"
-
+        #if seats arent availble asks user again to check seats
         else:
             print("Not all seats are available")
             self.buy()
+        
         name = input("Enter your name: ")
         email = input("Enter you email: ")
 
-        customers = "customers.json"
-        try:
-            customersFile = open(customers,"w")
-        except IOError:
-            print("Error: file "+ customers +" does not appear to exist")  
-            return -1
+        print(seat_Type)
+
+        #calculates all cost values
+        initial = 0
+        total = 0
+        if(seat_Type == "Front"):
+            initial = num_Tickets * 80
+        elif(seat_Type == "Middle"):
+            initial = num_Tickets * 50
+        elif(seat_Type == "Back"):
+            initial = num_Tickets * 25
+        print (initial)
+        mask_Fee = 5*num_Tickets
+        subtotal= mask_Fee+initial
+        print (subtotal)
+        tax = 0.0725*(subtotal)
+        print(tax)
+        total = tax+mask_Fee+initial
         
-        customerJson = jsonpickle.encode(customers)
 
-        customersFile.write(self.prettyJson(customerJson))
+        dictionary = {
+            "Name":name,
+            "Email":email,
+            "Number of tickets": num_Tickets,
+            "Seat Type": seat_Type,
+            "Seats":seat_list,
+            "Tickets": initial,
+            "Mask fee": mask_Fee,
+            "Subtotal": subtotal,
+            "tax": tax,
+            "total": total
+        }
 
-        print("Here is your receipt")
+        self.write_json(dictionary)
+
+        seat_string = ""
+        for i in seat_list:
+            seat_string+= str(i)
+
+        print("Here is your receipt: ")
+        print("Name: \t"+ name)
+        print("Email: \t"+ email)
+        print("Number of tickets: \t"+str(num_Tickets))
+        print("Seat Type: \t"+seat_Type)
+        print("Seats: \t"+seat_string)
+        print("Ticket Cost: \t"+str(initial))
+        print("Mask fee: \t"+str(mask_Fee))
+        print("Subtotal: \t"+str(subtotal))
+        print("Tax: \t"+str(tax))
+        print("Total: \t"+str(total))
+
         return
-
+    
+    def search_person(self, person):
+        pathToFile = r"C:\Users\ashis\OneDrive\Documents\GitHub\Concert-app\.vscode\customers.json"
+        try:
+            jsonFile = open(pathToFile, 'r')
+        except OSError:
+            print("ERROR: Unable to open the file %s" % pathToFile)
+            exit(-1)
+        # read the whole json file into a variable
+        concertList = json.load(jsonFile)
+       
+        # create an empty dictionary
+        concertDictionary = {}
+        # loop json list of data and put each name and birthday into a dictionary
+        for elem in concertList:
+            name = elem["Name"]
+            email = elem["Email"]
+            num_tickets = elem["Number of tickets"]
+            seat_type = elem["Seat Type"]
+            seat_list = elem["Seats"]
+            initial = elem["Tickets"]
+            mask_fee = elem["Mask fee"]
+            subtotal = elem["Subtotal"]
+            tax = elem["tax"]
+            total = elem["total"]
+            attribute_list = [email,num_tickets, seat_type, seat_list, initial, mask_fee, subtotal, tax, total]
+            concertDictionary[name] = attribute_list
         
+        purchase_list = []
+        check = False
+        for pair in concertDictionary:
+            if(pair.find(person) >= 0):
+                check = True
+                purchase_list = concertDictionary[pair]
+        print(purchase_list)
+
+        seat_string = ""
+        for i in seat_list:
+            seat_string+= str(i)
+
+        if(check):
+            for thing in purchase_list:
+                print(thing)
+                
+        return 
+
+    def display_people(self):
+        pathToFile = r"C:\Users\ashis\OneDrive\Documents\GitHub\Concert-app\.vscode\customers.json"
+        try:
+            jsonFile = open(pathToFile, 'r')
+        except OSError:
+            print("ERROR: Unable to open the file %s" % pathToFile)
+            exit(-1)
+        # read the whole json file into a variable
+        concertList = json.load(jsonFile)
+       
+        # create an empty dictionary
+        concertDictionary = {}
+        # loop json list of data and put each name and birthday into a dictionary
+        for elem in concertList:
+            name = elem["Name"]
+            email = elem["Email"]
+            num_tickets = elem["Number of tickets"]
+            seat_type = elem["Seat Type"]
+            seat_list = elem["Seats"]
+            initial = elem["Tickets"]
+            mask_fee = elem["Mask fee"]
+            subtotal = elem["Subtotal"]
+            tax = elem["tax"]
+            total = elem["total"]
+            attribute_list = [email,num_tickets, seat_type, seat_list, initial, mask_fee, subtotal, tax, total]
+            concertDictionary[name] = attribute_list
+
+        for person in concertDictionary:
+            print(person)
+
 
 
     def main(self):
@@ -110,9 +247,10 @@ class concert_App():
             elif(command == "b"):
                 self.buy()
             elif(command == "s"):
-                print("complete")
+                person = input("Who are you looking for?")
+                self.search_person(person)
             elif(command == "d"):
-                print("complete")
+                self.display_people()
             else:
                 print("not valid command")
             self.menu()

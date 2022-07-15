@@ -1,0 +1,37 @@
+[
+    {
+        "Name": "a",
+        "Email": "a",
+        "Number of tickets": 4,
+        "Seat Type": "Front",
+        "Seats": [
+            "2g",
+            "2h",
+            "2i",
+            "2j"
+        ],
+        "Tickets": 320,
+        "Mask fee": 20,
+        "Subtotal": 340,
+        "tax": 24.65,
+        "total": 364.65
+    },
+    {
+        "Name": "b",
+        "Email": "b",
+        "Number of tickets": 5,
+        "Seat Type": "Front",
+        "Seats": [
+            "5f",
+            "5g",
+            "5h",
+            "5i",
+            "5j"
+        ],
+        "Tickets": 400,
+        "Mask fee": 25,
+        "Subtotal": 425,
+        "tax": 30.812499999999996,
+        "total": 455.8125
+    }
+]
