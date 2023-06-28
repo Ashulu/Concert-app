@@ -8,7 +8,6 @@ class concert_App():
          self.n_row = 20
          self.n_col = 26
          self.seating = []
-    
     def prettyJson(self, jsonString):
         """
         Func: preattyJson
