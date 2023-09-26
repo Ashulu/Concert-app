@@ -1,5 +1,4 @@
 from mimetypes import init
-import jsonpickle
 import json
 
 class concert_App():
@@ -20,7 +19,7 @@ class concert_App():
         return result
     
 
-    def write_json(self, data, filename = r"C:\Users\ashis\OneDrive\Documents\GitHub\Concert-app\.vscode\customers.json"):
+    def write_json(self, data, filename = r"/Users/ashis/Documents/GitHub/Concert-app/.vscode/customers.json"):
         with open(filename,'r+') as file:
             # First we load existing data into a dict.
             file_data = json.load(file)

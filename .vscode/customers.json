@@ -34,5 +34,20 @@
         "Subtotal": 510,
         "tax": 36.974999999999994,
         "total": 546.975
+    },
+    {
+        "Name": "Ashish Chenna",
+        "Email": "ashish.chenna05@gmail.com",
+        "Number of tickets": 2,
+        "Seat Type": "Middle",
+        "Seats": [
+            "9c",
+            "9d"
+        ],
+        "Tickets": 100,
+        "Mask fee": 10,
+        "Subtotal": 110,
+        "tax": 7.975,
+        "total": 117.975
     }
 ]
